@@ -6,6 +6,8 @@ import { doc, getDoc } from 'firebase/firestore';
 import { TouchableOpacity } from 'react-native';
 import { router } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
+import { useFocusEffect } from '@react-navigation/native';
+import { useCallback } from 'react';
 export const options = {
   headerShown: false,
 };
@@ -23,54 +25,62 @@ export default function StatsScreen() {
   const [average, setAverage] = useState<number>(0);
   const [overGoalDays, setOverGoalDays] = useState<number>(0);
 
-  useEffect(() => {
-    const fetchStats = async () => {
-      const user = auth.currentUser;
-      if (!user) return;
-
-      try {
-        const profileRef = doc(db, 'profiles', user.uid);
-        const entriesRef = doc(db, 'entries', user.uid);
-        const [profileSnap, entriesSnap] = await Promise.all([
-          getDoc(profileRef),
-          getDoc(entriesRef),
-        ]);
-
-        const calorieGoal = profileSnap.exists()
-          ? Number(profileSnap.data().calorieGoal) || 2000
-          : 2000;
-
-        const entries = entriesSnap.exists() ? entriesSnap.data() : {};
-        const today = new Date();
-        const data: WeeklyEntry[] = [];
-        let total = 0;
-        let exceed = 0;
-
-        for (let i = 6; i >= 0; i--) {
-          const date = new Date(today);
-          date.setDate(date.getDate() - i);
-          const dateStr = date.toISOString().split('T')[0];
-          const label = weekDays[date.getDay() === 0 ? 6 : date.getDay() - 1];
-          const dayEntries = entries[dateStr] || [];
-          const dayTotal = dayEntries.reduce((sum: number, e: any) => sum + e.calories, 0);
-
-          if (dayTotal > calorieGoal) exceed++;
-          total += dayTotal;
-
-          data.push({ label, date: dateStr, calories: dayTotal });
-        }
-
-        setWeeklyData(data);
-        setAverage(Math.round(total / 7));
-        setOverGoalDays(exceed);
-      } catch (error) {
-        console.error('İstatistik verisi alınamadı:', error);
+  const fetchStats = async (
+    setWeeklyData: React.Dispatch<React.SetStateAction<WeeklyEntry[]>>,
+    setAverage: React.Dispatch<React.SetStateAction<number>>,
+    setOverGoalDays: React.Dispatch<React.SetStateAction<number>>
+  ) => {
+    const user = auth.currentUser;
+    if (!user) return;
+  
+    try {
+      const profileRef = doc(db, 'profiles', user.uid);
+      const entriesRef = doc(db, 'entries', user.uid);
+      const [profileSnap, entriesSnap] = await Promise.all([
+        getDoc(profileRef),
+        getDoc(entriesRef),
+      ]);
+  
+      const calorieGoal = profileSnap.exists()
+        ? Number(profileSnap.data().calorieGoal) || 2000
+        : 2000;
+  
+      const entries = entriesSnap.exists() ? entriesSnap.data() : {};
+      const today = new Date();
+      const data: WeeklyEntry[] = [];
+      let total = 0;
+      let exceed = 0;
+  
+      for (let i = 6; i >= 0; i--) {
+        const date = new Date(today);
+        date.setDate(date.getDate() - i);
+        const dateStr = date.toISOString().split('T')[0];
+        const label = weekDays[date.getDay() === 0 ? 6 : date.getDay() - 1];
+        const dayEntries = entries[dateStr] || [];
+        const dayTotal = dayEntries.reduce((sum: number, e: any) => sum + e.calories, 0);
+  
+        if (dayTotal > calorieGoal) exceed++;
+        total += dayTotal;
+  
+        data.push({ label, date: dateStr, calories: dayTotal });
       }
-    };
-
-    fetchStats();
+  
+      setWeeklyData(data);
+      setAverage(Math.round(total / 7));
+      setOverGoalDays(exceed);
+    } catch (error) {
+      console.error('İstatistik verisi alınamadı:', error);
+    }
+  };
+  useEffect(() => {
+    fetchStats(setWeeklyData, setAverage, setOverGoalDays);
   }, []);
-
+  
+  useFocusEffect(
+    useCallback(() => {
+      fetchStats(setWeeklyData, setAverage, setOverGoalDays);
+    }, [])
+  );
   return (
     <SafeAreaView style={styles.container}>
        <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
