@@ -9,23 +9,32 @@ export const options = {
   headerShown: false,
 };
 
-const weekDays = ['🌞 Pzt', '☕ Sal', '🧘 Çar', '📚 Per', '🎉 Cum', '🎮 Cmt', '🌈 Paz'];
+const weekDays = [
+  { emoji: '🌞', label: 'Pzt' },
+  { emoji: '☕', label: 'Sal' },
+  { emoji: '🧘', label: 'Çar' },
+  { emoji: '📚', label: 'Per' },
+  { emoji: '🎉', label: 'Cum' },
+  { emoji: '🎮', label: 'Cmt' },
+  { emoji: '🌈', label: 'Paz' },
+];
 
 export default function HomeScreen() {
   const [profileImage, setProfileImage] = useState('🐶');
   const [userName, setUserName] = useState('');
   const [calorieGoal, setCalorieGoal] = useState(2000);
-  const [dayStatus, setDayStatus] = useState<{ [date: string]: 'green' | 'red'| 'gray' }>({});
+  const [dayStatus, setDayStatus] = useState<{ [date: string]: 'green' | 'red' | 'gray' }>({});
   const [todayTotal, setTodayTotal] = useState(0);
 
   const today = new Date().toISOString().split('T')[0];
+
   const getWeekDates = () => {
     const dates: string[] = [];
     const now = new Date();
-    const currentDay = now.getDay() === 0 ? 7 : now.getDay(); // Pazar'ı 7 yap
+    const currentDay = now.getDay() === 0 ? 7 : now.getDay(); // 0 => Pazar, 7 yapıyoruz
     const monday = new Date(now);
     monday.setDate(now.getDate() - (currentDay - 1));
-  
+
     for (let i = 0; i < 7; i++) {
       const d = new Date(monday);
       d.setDate(monday.getDate() + i);
@@ -33,6 +42,7 @@ export default function HomeScreen() {
     }
     return dates;
   };
+
   useEffect(() => {
     const fetchData = async () => {
       const user = auth.currentUser;
@@ -54,13 +64,9 @@ export default function HomeScreen() {
         }
 
         const entries = entriesSnap.exists() ? entriesSnap.data() : {};
-        const newStatus: { [key: string]: 'green' | 'red' | 'gray'} = {};
+        const newStatus: { [key: string]: 'green' | 'red' | 'gray' } = {};
 
-        const now = new Date();
-        for (let i = 0; i < 7; i++) {
-          const date = new Date(now);
-          date.setDate(date.getDate() - (6 - i));
-          const dateStr = date.toISOString().split('T')[0];
+        getWeekDates().forEach((dateStr) => {
           const daily = entries[dateStr] || [];
           const total = daily.reduce((sum: number, e: any) => sum + e.calories, 0);
           if (daily.length > 0) {
@@ -69,7 +75,7 @@ export default function HomeScreen() {
             newStatus[dateStr] = 'gray';
           }
           if (dateStr === today) setTodayTotal(total);
-        }
+        });
 
         setDayStatus(newStatus);
       } catch (error) {
@@ -98,32 +104,32 @@ export default function HomeScreen() {
 
       <Text style={styles.title}>Hoş geldin {userName} 👋</Text>
       <Text style={styles.subtitle}>{todayTotal} / {calorieGoal} kalori</Text>
-      <View style={styles.weekRow}>
-  {
-  getWeekDates().map((dateStr, index) => {
-    const dateObj = new Date(dateStr);
-    const dayNumber = dateObj.getDate();
-    const isToday = dateStr === today;
-    const status = dayStatus[dateStr];
 
-    return (
-      <View key={dateStr} style={styles.weekDayBox}>
-        <View
-          style={[
-            styles.dayNumberWrapper,
-            status === 'green' && styles.greenBackground,
-            status === 'red' && styles.redBackground,
-            status === 'gray' && styles.grayBackground,
-          ]}
-        >
-          {isToday && <View style={styles.purpleDot} />}
-          <Text style={styles.dayNumber}>{dayNumber}</Text>
-        </View>
-        <Text style={styles.dayLabel}>{weekDays[index].split(' ')[1]}</Text>
+      <View style={styles.weekRow}>
+        {getWeekDates().map((dateStr, index) => {
+          const dateObj = new Date(dateStr);
+          const dayNumber = dateObj.getDate();
+          const isToday = dateStr === today;
+          const status = dayStatus[dateStr];
+          const day = weekDays[index];
+          const backgroundColorStyle =
+          status === 'green' ? styles.greenBackground :
+          status === 'red' ? styles.redBackground :
+          styles.grayBackground;
+          return (
+            <View key={dateStr} style={styles.weekDayBox}>
+              <View
+               style={[styles.dayNumberWrapper, backgroundColorStyle]}
+              >
+                <Text style={styles.dayNumber}>{dayNumber}</Text>
+                {isToday && <View style={styles.purpleDot} />}
+              </View>
+              <Text style={styles.dayLabel}>{`${day.emoji} ${day.label}`}</Text>
+            </View>
+          );
+        })}
       </View>
-    );
-  })}
-</View>
+
       <View style={styles.buttonRow}>
         <TouchableOpacity
           style={[styles.button, { backgroundColor: '#5EBEC4' }]}
@@ -161,50 +167,6 @@ const styles = StyleSheet.create({
     paddingTop: 24,
     backgroundColor: '#fff',
   },
-  weekRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginVertical: 20,
-  },
-  weekDayBox: {
-    alignItems: 'center',
-    width: 40,
-  },
-  dayNumberWrapper: {
-    width: 36,
-    height: 50,
-    borderRadius: 18,
-    justifyContent: 'center',
-    alignItems: 'center',
-    position: 'relative',
-  },
-  purpleDot: {
-    position: 'absolute',
-    top: -6,
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-    backgroundColor: 'purple',
-  },
-  dayNumber: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#000',
-  },
-  dayLabel: {
-    fontSize: 12,
-    marginTop: 4,
-    color: '#333',
-  },
-  greenBackground: {
-    backgroundColor: '#5EBE91',
-  },
-  redBackground: {
-    backgroundColor: '#E4572E',
-  },
-  grayBackground: {
-    backgroundColor: '#ccc',
-  },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -234,6 +196,52 @@ const styles = StyleSheet.create({
     marginTop: 4,
     fontSize: 16,
     color: '#555',
+  },
+  weekRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginVertical: 20,
+  },
+  weekDayBox: {
+    alignItems: 'center',
+    width: 40,
+  },
+  dayNumberWrapper: {
+    borderRadius:8,
+    width: 48,
+    height: 48,
+    justifyContent: 'center',
+    alignItems: 'center',
+    position: 'relative',
+  },
+  purpleDot: {
+    position: 'absolute',
+    top: 4,
+    right: 4,
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: 'purple',
+  },
+  dayNumber: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#000',
+  },
+  dayLabel: {
+    fontSize: 12,
+    marginTop: 4,
+    color: '#333',
+    textAlign: 'center',
+  },
+  greenBackground: {
+    backgroundColor: '#5EBE91',
+  },
+  redBackground: {
+    backgroundColor: '#E4572E',
+  },
+  grayBackground: {
+    backgroundColor: '#ccc',
   },
   buttonRow: {
     flexDirection: 'row',

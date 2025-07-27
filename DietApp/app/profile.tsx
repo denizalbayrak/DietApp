@@ -14,7 +14,7 @@ import { doc, setDoc, getDoc } from 'firebase/firestore';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 
-const profileImages = ['🐶', '🐱', '🦊', '🐼', '🐵']; 
+const profileImages = ['🐵', '🐱', '🐶', '🐼', '🦊']; 
 
 export default function ProfileScreen() {
   const [selectedImage, setSelectedImage] = useState('🐶');
@@ -34,7 +34,7 @@ export default function ProfileScreen() {
 
         if (docSnap.exists()) {
           const data = docSnap.data();
-          setSelectedImage(data.image || '🐶');
+          setSelectedImage(data.image || '🐵');
           setName(data.name || '');
           setCalorieGoal(data.calorieGoal || '');
           setTargetWeight(data.targetWeight || '');
