@@ -4,7 +4,8 @@ import { useEffect, useState } from 'react';
 import { auth, db } from '../firebase';
 import { doc, getDoc } from 'firebase/firestore';
 import { SafeAreaView } from 'react-native-safe-area-context';
-
+import { TouchableOpacity } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 export const options = {
   headerShown: false,
 };
@@ -46,6 +47,9 @@ export default function DayDetailScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
+       <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
+        <Ionicons name="arrow-back" size={28} color="#444" />
+      </TouchableOpacity>
       <Text style={styles.title}>{date} Günü Girdileri</Text>
       <Text style={styles.total}>Toplam Kalori: {total} kcal</Text>
 
@@ -77,6 +81,9 @@ const styles = StyleSheet.create({
     paddingBottom: 24,
     backgroundColor: '#fff',
     paddingHorizontal: 24,
+  },
+  backButton: {
+    marginBottom: 16,
   },
   title: {
     fontSize: 22,

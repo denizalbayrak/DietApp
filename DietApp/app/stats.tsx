@@ -3,7 +3,9 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useEffect, useState } from 'react';
 import { auth, db } from '../firebase';
 import { doc, getDoc } from 'firebase/firestore';
-
+import { TouchableOpacity } from 'react-native';
+import { router } from 'expo-router';
+import { Ionicons } from '@expo/vector-icons';
 export const options = {
   headerShown: false,
 };
@@ -71,6 +73,9 @@ export default function StatsScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
+       <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
+        <Ionicons name="arrow-back" size={28} color="#444" />
+      </TouchableOpacity>
       <Text style={styles.title}>Haftalık İstatistikler</Text>
 
       <ScrollView style={{ flex: 1 }}>
@@ -98,6 +103,9 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 24,
     backgroundColor: '#fff',
+  },
+  backButton: {
+    marginBottom: 16,
   },
   title: {
     fontSize: 22,

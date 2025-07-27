@@ -12,6 +12,7 @@ import { router } from 'expo-router';
 import { db, auth } from '../firebase';
 import { doc, setDoc, getDoc } from 'firebase/firestore';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { Ionicons } from '@expo/vector-icons';
 
 const profileImages = ['🐶', '🐱', '🦊', '🐼', '🐵']; 
 
@@ -82,6 +83,9 @@ export default function ProfileScreen() {
   return (
     <SafeAreaView style={styles.container}>
     <View style={styles.container}>
+    <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
+        <Ionicons name="arrow-back" size={28} color="#444" />
+      </TouchableOpacity>
       <Text style={styles.title}>Profil Ayarları</Text>
 
       <Text style={styles.label}>Profil Resmi Seç</Text>
@@ -146,6 +150,9 @@ const styles = StyleSheet.create({
     paddingBottom: 24,
     paddingHorizontal: 24,
     backgroundColor: '#fff',
+  },
+  backButton: {
+    marginBottom: 16,
   },
   title: {
     fontSize: 26,
