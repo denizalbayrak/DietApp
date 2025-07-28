@@ -82,7 +82,8 @@ export default function HomeScreen() {
         const daily = entries[dateStr] || [];
         const total = daily.reduce((sum: number, e: any) => sum + e.calories, 0);
         if (daily.length > 0) {
-          newStatus[dateStr] = total > Number(profileSnap.data().calorieGoal) ? 'red' : 'green';
+          const calorieGoal = profileSnap.data()?.calorieGoal ?? 2000; // default fallback
+          newStatus[dateStr] = total > Number(calorieGoal) ? 'red' : 'green';
         } else {
           newStatus[dateStr] = 'gray';
         }

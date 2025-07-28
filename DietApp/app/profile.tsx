@@ -13,20 +13,24 @@ import { db, auth } from '../firebase';
 import { doc, setDoc, getDoc } from 'firebase/firestore';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
+import { sendPasswordResetEmail } from 'firebase/auth';
 
-const profileImages = ['🐵', '🐱', '🐶', '🐼', '🦊']; 
+const profileImages = ['🐵', '🐱', '🐶', '🐼', '🦊'];
 
 export default function ProfileScreen() {
   const [selectedImage, setSelectedImage] = useState('🐶');
   const [name, setName] = useState('');
   const [calorieGoal, setCalorieGoal] = useState('');
   const [targetWeight, setTargetWeight] = useState('');
+  const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchProfile = async () => {
       const user = auth.currentUser;
       if (!user) return;
+
+      setEmail(user.email || ''); // Email'i kullanıcıdan al
 
       try {
         const docRef = doc(db, 'profiles', user.uid);
@@ -48,6 +52,16 @@ export default function ProfileScreen() {
 
     fetchProfile();
   }, []);
+
+  const handleResetPassword = async () => {
+    try {
+      await sendPasswordResetEmail(auth, email);
+      Alert.alert("E-posta gönderildi", "Şifre sıfırlama bağlantısı e-posta adresinize gönderildi.");
+    } catch (error) {
+      console.error("Şifre sıfırlama hatası:", error);
+      Alert.alert("Hata", "Geçerli bir e-posta adresiniz olmayabilir.");
+    }
+  };
 
   const handleSave = async () => {
     const user = auth.currentUser;
@@ -82,10 +96,16 @@ export default function ProfileScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-    <View style={styles.container}>
-    <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
+      <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
         <Ionicons name="arrow-back" size={28} color="#444" />
       </TouchableOpacity>
+
+      <TouchableOpacity onPress={handleResetPassword}>
+        <Text style={{ color: 'blue', textAlign: 'center', marginTop: 10 }}>
+          Şifremi Unuttum?
+        </Text>
+      </TouchableOpacity>
+
       <Text style={styles.title}>Profil Ayarları</Text>
 
       <Text style={styles.label}>Profil Resmi Seç</Text>
@@ -137,7 +157,6 @@ export default function ProfileScreen() {
       <TouchableOpacity style={styles.button} onPress={handleSave}>
         <Text style={styles.buttonText}>Kaydet</Text>
       </TouchableOpacity>
-    </View>
     </SafeAreaView>
   );
 }
@@ -146,9 +165,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 24,
-    paddingTop: 16,
-    paddingBottom: 24,
-    paddingHorizontal: 24,
     backgroundColor: '#fff',
   },
   backButton: {
