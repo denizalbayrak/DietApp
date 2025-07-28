@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "DietApp",
+    "name": "Diet App",
     "slug": "DietApp",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -14,7 +14,7 @@
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
+        "backgroundColor": "#FF90B3"
       },
       "edgeToEdgeEnabled": true,
       "package": "com.deniz.dietapp"
@@ -32,7 +32,7 @@
           "image": "./assets/images/splash-icon.png",
           "imageWidth": 200,
           "resizeMode": "contain",
-          "backgroundColor": "#ffffff"
+          "backgroundColor": "#FF90B3"
         }
       ]
     ],
