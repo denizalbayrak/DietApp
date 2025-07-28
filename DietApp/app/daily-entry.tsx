@@ -107,7 +107,7 @@ export default function DailyEntryScreen() {
         <Ionicons name="arrow-back" size={28} color="#444" />
       </TouchableOpacity>
 
-      <Text style={styles.title}>Günlük Kalori Takibi</Text>
+      <Text style={styles.title}>🗿 Günlük Kalori Takibi</Text>
 
       <View style={styles.gaugeContainer}>
         <AnimatedCircularProgress
@@ -166,67 +166,83 @@ export default function DailyEntryScreen() {
     </SafeAreaView>
   );
 }
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 24,
-    backgroundColor: '#fff',
+    backgroundColor: '#FFF2F7',
   },
   backButton: {
     marginBottom: 16,
   },
   title: {
-    fontSize: 24,
+    fontSize: 26,
     fontWeight: 'bold',
-    marginBottom: 20,
+    marginBottom: 24,
     textAlign: 'center',
+    color: '#333',
   },
   gaugeContainer: {
     alignItems: 'center',
-    marginBottom: 20,
+    marginBottom: 24,
   },
   gaugeText: {
-    fontSize: 20,
+    fontSize: 22,
     fontWeight: 'bold',
+    color: '#444',
   },
   input: {
-    height: 48,
-    borderColor: '#ccc',
-    borderWidth: 1,
-    borderRadius: 8,
-    paddingHorizontal: 12,
-    marginBottom: 12,
+    height: 56,
+    borderColor: '#FFC9E0',
+    backgroundColor: '#FFF6FA',
+    borderWidth: 2,
+    borderRadius: 12,
+    paddingHorizontal: 16,
+    marginBottom: 16,
+    fontSize: 16,
   },
   button: {
-    backgroundColor: '#5EBEC4',
-    paddingVertical: 12,
-    borderRadius: 8,
-    marginBottom: 20,
+    backgroundColor: '#FF90B3',
+    paddingVertical: 16,
+    borderRadius: 12,
+    marginBottom: 24,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 4,
   },
   buttonText: {
     color: '#fff',
     textAlign: 'center',
     fontWeight: 'bold',
+    fontSize: 18,
   },
   listTitle: {
-    fontSize: 18,
+    fontSize: 20,
     fontWeight: 'bold',
-    marginBottom: 8,
+    marginBottom: 10,
+    color: '#444',
+    textAlign: 'center',
   },
   entryItem: {
-    padding: 12,
-    borderBottomColor: '#ccc',
+    padding: 16,
+    borderBottomColor: '#FF90B3',
     borderBottomWidth: 1,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
+    backgroundColor: '#FF90B3',
+    borderColor:  '#FF90B3',
+    borderRadius: 10,
+    marginBottom: 8,
   },
   entryText: {
     fontSize: 16,
+    color: '#444',
   },
   editBtn: {
-    fontSize: 18,
-    color: '#5EBEC4',
+    fontSize: 20,
+    color: '#FF90B3',
   },
 });

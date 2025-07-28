@@ -1,27 +1,27 @@
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { auth, db } from '../firebase';
 import { doc, getDoc } from 'firebase/firestore';
 import { router } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useFocusEffect } from '@react-navigation/native';
-import { useCallback } from 'react';
+
 export const options = {
   headerShown: false,
 };
 
 const weekDays = [
-  { emoji: '🌞', label: 'Pzt' },
-  { emoji: '☕', label: 'Sal' },
-  { emoji: '🧘', label: 'Çar' },
-  { emoji: '📚', label: 'Per' },
-  { emoji: '🎉', label: 'Cum' },
-  { emoji: '🎮', label: 'Cmt' },
-  { emoji: '🌈', label: 'Paz' },
+  { emoji: '🍓', label: 'Pzt' },
+  { emoji: '🍊', label: 'Sal' },
+  { emoji: '🥦', label: 'Çar' },
+  { emoji: '🥕', label: 'Per' },
+  { emoji: '🌊', label: 'Cum' },
+  { emoji: '🍑', label: 'Cmt' },
+  { emoji: '🍠', label: 'Paz' },
 ];
 
 export default function HomeScreen() {
-  const [profileImage, setProfileImage] = useState('🐶');
+  const [profileImage, setProfileImage] = useState('👩');
   const [userName, setUserName] = useState('');
   const [calorieGoal, setCalorieGoal] = useState(2000);
   const [dayStatus, setDayStatus] = useState<{ [date: string]: 'green' | 'red' | 'gray' }>({});
@@ -31,7 +31,7 @@ export default function HomeScreen() {
   const getWeekDates = () => {
     const dates: string[] = [];
     const now = new Date();
-    const currentDay = now.getDay() === 0 ? 7 : now.getDay(); // 0 => Pazar, 7 yap
+    const currentDay = now.getDay() === 0 ? 7 : now.getDay();
     const monday = new Date(now);
     monday.setDate(now.getDate() - (currentDay - 1));
     for (let i = 0; i < 7; i++) {
@@ -41,17 +41,11 @@ export default function HomeScreen() {
     }
     return dates;
   };
-  const fetchData = async (
-    setUserName: (val: string) => void,
-    setProfileImage: (val: string) => void,
-    setCalorieGoal: (val: number) => void,
-    setTodayTotal: (val: number) => void,
-    setDayStatus: (val: { [key: string]: 'green' | 'red' | 'gray' }) => void,
-    today: string
-  ) => {
+
+  const fetchData = async () => {
     const user = auth.currentUser;
     if (!user) return;
-  
+
     try {
       const profileRef = doc(db, 'profiles', user.uid);
       const entriesRef = doc(db, 'entries', user.uid);
@@ -59,22 +53,22 @@ export default function HomeScreen() {
         getDoc(profileRef),
         getDoc(entriesRef),
       ]);
-  
+
       if (profileSnap.exists()) {
         const data = profileSnap.data();
         setUserName(data.name || '');
-        setProfileImage(data.image || '🐶');
+        setProfileImage(data.image || '👩');
         setCalorieGoal(Number(data.calorieGoal) || 2000);
       }
-  
+
       const entries = entriesSnap.exists() ? entriesSnap.data() : {};
       const newStatus: { [key: string]: 'green' | 'red' | 'gray' } = {};
-  
+
       const now = new Date();
       const currentDay = now.getDay() === 0 ? 7 : now.getDay();
       const monday = new Date(now);
       monday.setDate(now.getDate() - (currentDay - 1));
-  
+
       for (let i = 0; i < 7; i++) {
         const date = new Date(monday);
         date.setDate(monday.getDate() + i);
@@ -82,29 +76,31 @@ export default function HomeScreen() {
         const daily = entries[dateStr] || [];
         const total = daily.reduce((sum: number, e: any) => sum + e.calories, 0);
         if (daily.length > 0) {
-          const calorieGoal = profileSnap.data()?.calorieGoal ?? 2000; // default fallback
-          newStatus[dateStr] = total > Number(calorieGoal) ? 'red' : 'green';
+          const goal = profileSnap.data()?.calorieGoal ?? 2000;
+          newStatus[dateStr] = total > Number(goal) ? 'red' : 'green';
         } else {
           newStatus[dateStr] = 'gray';
         }
-  
+
         if (dateStr === today) setTodayTotal(total);
       }
-  
+
       setDayStatus(newStatus);
     } catch (error) {
       console.error('Veri çekilemedi:', error);
     }
   };
+
   useEffect(() => {
-    fetchData(setUserName, setProfileImage, setCalorieGoal, setTodayTotal, setDayStatus, today);
+    fetchData();
   }, []);
-  
+
   useFocusEffect(
     useCallback(() => {
-      fetchData(setUserName, setProfileImage, setCalorieGoal, setTodayTotal, setDayStatus, today);
+      fetchData();
     }, [today])
   );
+
   const handleLogout = async () => {
     await auth.signOut();
     router.replace('/login');
@@ -112,8 +108,13 @@ export default function HomeScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
+      {/* Header */}
       <View style={styles.header}>
-        <Text style={styles.homeTitle}>Home</Text>
+        <View>
+          <Text style={styles.greeting}>Hoş geldin</Text>
+          <Text style={styles.name}>{userName} 💛</Text>
+          <Text style={styles.subtitle}>Bugün de güzel seçimler yapmaya hazırsın ✨</Text>
+        </View>
         <TouchableOpacity onPress={() => router.push('/profile')}>
           <View style={styles.profileCircle}>
             <Text style={styles.profileEmoji}>{profileImage}</Text>
@@ -121,14 +122,11 @@ export default function HomeScreen() {
         </TouchableOpacity>
       </View>
 
-      <Text style={styles.title}>Hoş geldin {userName} 👋</Text>
-      <Text style={styles.subtitle}>{todayTotal} / {calorieGoal} kalori</Text>
-
+      {/* Week Calendar */}
       <View style={styles.weekRow}>
         {getWeekDates().map((dateStr, index) => {
           const dateObj = new Date(dateStr);
           const dayNumber = dateObj.getDate();
-          const isToday = dateStr === today;
           const status = dayStatus[dateStr];
           const day = weekDays[index];
 
@@ -141,158 +139,212 @@ export default function HomeScreen() {
             <View key={dateStr} style={styles.weekDayBox}>
               <View style={[styles.dayNumberWrapper, backgroundColorStyle]}>
                 <Text style={styles.dayNumber}>{dayNumber}</Text>
-                {isToday && <View style={styles.purpleDot} />}
               </View>
-              <Text style={styles.dayLabel}>{`${day.emoji} ${day.label}`}</Text>
+              <Text style={styles.emoji}>{day.emoji}</Text>
+              <Text style={styles.dayLabel}>{day.label}</Text>
             </View>
           );
         })}
       </View>
 
-      <View style={styles.buttonRow}>
+      {/* Progress Bar */}
+      <View style={styles.progressContainer}>
+        <Text style={styles.progressLabel}>{todayTotal} / {calorieGoal} kcal 🍓</Text>
+        <View style={styles.progressBarBackground}>
+          <View style={[styles.progressBarFill, { width: `${(todayTotal / calorieGoal) * 100}%` }]} />
+        </View>
+      </View>
+
+      {/* Buttons */}
+      <TouchableOpacity
+        style={[styles.button, { backgroundColor: '#F49FB6' }]}
+        onPress={() => router.push('/daily-entry')}>
+        <Text style={styles.buttonText}>Günlük Veri Gir</Text>
+      </TouchableOpacity>
+
+      <View style={styles.row}>
         <TouchableOpacity
-          style={[styles.button, { backgroundColor: '#5EBEC4' }]}
-          onPress={() => router.push('/daily-entry')}
-        >
-          <Text style={styles.buttonText}>Günlük Veri Gir</Text>
+          style={[styles.buttonSmall, { backgroundColor: '#A0D8EF' }]}
+          onPress={() => router.push('/calendar')}>
+          <Text style={styles.buttonText}>Takvim</Text>
         </TouchableOpacity>
 
         <TouchableOpacity
-          style={[styles.button, { backgroundColor: '#5EBE91' }]}
-          onPress={() => router.push('/calendar')}
-        >
-          <Text style={styles.buttonText}>Takvim</Text>
+          style={[styles.buttonSmall, { backgroundColor: '#FDD984' }]}
+          onPress={() => router.push('./stats')}>
+          <Text style={styles.buttonText}>İstatistik</Text>
         </TouchableOpacity>
       </View>
 
-      <TouchableOpacity
-        style={styles.statsButton}
-        onPress={() => router.push('./stats')}
-      >
-        <Text style={styles.buttonText}>İstatistik</Text>
-      </TouchableOpacity>
-
+      {/* Logout */}
       <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
         <Text style={styles.logoutText}>Çıkış Yap</Text>
       </TouchableOpacity>
+
+      {/* Motivation Message */}
+      <Text style={styles.footer}>🍓 Küçük adımlar büyük değişimlere yol açar!</Text>
     </SafeAreaView>
   );
 }
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingHorizontal: 24,
-    paddingTop: 24,
-    backgroundColor: '#fff',
+    padding: 24,
+    backgroundColor: '#FFF1F7',
   },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 12,
   },
-  homeTitle: {
+  greeting: {
     fontSize: 24,
     fontWeight: 'bold',
+    color: '#5B4B8A',
   },
-  profileCircle: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: '#f3f3f3',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  profileEmoji: {
-    fontSize: 24,
-  },
-  title: {
-    fontSize: 22,
+  name: {
+    fontSize: 28,
     fontWeight: 'bold',
+    color: '#5B4B8A',
   },
   subtitle: {
-    marginTop: 4,
+    marginTop: 8,
     fontSize: 16,
-    color: '#555',
+    color: '#A67DB8',
+  },
+  profileCircle: {
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    backgroundColor: '#fff',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 2,
+    borderColor: '#eee',
+    elevation: 4, // Android shadow
+    shadowColor: '#000', // iOS shadow
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.15,
+    shadowRadius: 3,
+  },
+  profileEmoji: {
+    fontSize: 30,
   },
   weekRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginVertical: 20,
+    marginVertical: 24,
   },
   weekDayBox: {
     alignItems: 'center',
-    width: 40,
+    width: 48,
   },
   dayNumberWrapper: {
-    borderRadius:8,
+    borderRadius: 10,
     width: 48,
     height: 48,
     justifyContent: 'center',
     alignItems: 'center',
-    position: 'relative',
-  },
-  purpleDot: {
-    position: 'absolute',
-    top: 4,
-    right: 4,
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-    backgroundColor: 'purple',
   },
   dayNumber: {
-    fontSize: 16,
+    fontSize: 18,
     fontWeight: 'bold',
-    color: '#000',
+    color: '#fff',
+  },
+  emoji: {
+    fontSize: 22,
+    marginVertical: 2,
   },
   dayLabel: {
-    fontSize: 12,
-    marginTop: 4,
+    fontSize: 14,
     color: '#333',
     textAlign: 'center',
   },
   greenBackground: {
-    backgroundColor: '#5EBE91',
+    backgroundColor: '#A0D995',
   },
   redBackground: {
-    backgroundColor: '#E4572E',
+    backgroundColor: '#F25C66',
   },
   grayBackground: {
-    backgroundColor: '#ccc',
+    backgroundColor: '#D8D8D8',
   },
-  buttonRow: {
+  progressContainer: {
+    marginBottom: 32,
+  },
+  progressLabel: {
+    textAlign: 'center',
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#7A5184',
+    marginBottom: 10,
+  },
+  progressBarBackground: {
+    width: '100%',
+    height: 16,
+    backgroundColor: '#F2D5F7',
+    borderRadius: 8,
+  },
+  progressBarFill: {
+    height: '100%',
+    backgroundColor: '#B570C1',
+    borderRadius: 8,
+  },
+  button: {
+    paddingVertical: 16,
+    borderRadius: 12,
+    alignItems: 'center',
+    marginBottom: 18,
+    elevation: 5,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.15,
+    shadowRadius: 4,
+  },
+  buttonSmall: {
+    flex: 1,
+    paddingVertical: 16,
+    borderRadius: 12,
+    alignItems: 'center',
+    elevation: 5,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.15,
+    shadowRadius: 4,
+  },
+  row: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     gap: 16,
   },
-  button: {
-    flex: 1,
-    paddingVertical: 14,
-    borderRadius: 8,
-    alignItems: 'center',
-  },
-  statsButton: {
-    marginTop: 16,
-    paddingVertical: 12,
-    paddingHorizontal: 32,
-    alignSelf: 'center',
-    backgroundColor: '#E4B363',
-    borderRadius: 8,
-  },
   buttonText: {
     color: '#fff',
     fontWeight: 'bold',
+    fontSize: 18,
   },
   logoutButton: {
-    marginTop: 32,
-    paddingVertical: 14,
+    marginTop: 28,
+    paddingVertical: 16,
+    borderRadius: 12,
     backgroundColor: '#E4572E',
-    borderRadius: 8,
+    elevation: 5,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.15,
+    shadowRadius: 4,
   },
   logoutText: {
-    color: '#fff',
     textAlign: 'center',
     fontWeight: 'bold',
+    color: '#fff',
+    fontSize: 18,
   },
+  footer: {
+    marginTop: 24,
+    textAlign: 'center',
+    color: '#A05A7C',
+    fontSize: 16,
+  },
+  
 });

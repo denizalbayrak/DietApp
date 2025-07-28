@@ -1,5 +1,12 @@
 import { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  StyleSheet,
+  Alert,
+} from 'react-native';
 import { router } from 'expo-router';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../firebase';
@@ -13,8 +20,8 @@ export default function SignUpScreen() {
   const handleSignUp = async () => {
     try {
       await createUserWithEmailAndPassword(auth, email, password);
-      Alert.alert('Kayıt Başarılı', 'Artık giriş yapabilirsiniz.');
-      router.replace('/home'); // Veya istersen /login
+      Alert.alert('Kayıt Başarılı 🎉', 'Artık giriş yapabilirsiniz.');
+      router.replace('/home');
     } catch (error: any) {
       Alert.alert('Kayıt Hatası', error.message || 'Bir şeyler yanlış gitti.');
     }
@@ -22,12 +29,12 @@ export default function SignUpScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-    <View style={styles.container}>
-      <Text style={styles.title}>Kayıt Ol</Text>
+      <Text style={styles.title}>Kayıt Ol ✨</Text>
 
       <TextInput
         style={styles.input}
         placeholder="E-posta"
+        placeholderTextColor="#aaa"
         value={email}
         onChangeText={setEmail}
         keyboardType="email-address"
@@ -38,6 +45,7 @@ export default function SignUpScreen() {
         <TextInput
           style={styles.passwordInput}
           placeholder="Şifre (min 6 karakter)"
+          placeholderTextColor="#aaa"
           value={password}
           onChangeText={setPassword}
           secureTextEntry={!passwordVisible}
@@ -57,7 +65,6 @@ export default function SignUpScreen() {
       <TouchableOpacity onPress={() => router.replace('/login')}>
         <Text style={styles.linkText}>Zaten hesabın var mı? Giriş yap</Text>
       </TouchableOpacity>
-    </View>
     </SafeAreaView>
   );
 }
@@ -66,55 +73,64 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 24,
-    paddingTop: 16,
-    paddingBottom: 24,
-    paddingHorizontal: 24,
     justifyContent: 'center',
-    backgroundColor: '#fff',
+    backgroundColor: '#FFF1F7',
   },
   title: {
     fontSize: 28,
     fontWeight: 'bold',
-    marginBottom: 24,
+    marginBottom: 32,
+    color: '#5B4B8A',
     textAlign: 'center',
   },
   input: {
-    height: 48,
-    borderColor: '#ccc',
+    height: 50,
+    borderColor: '#E2C1E5',
     borderWidth: 1,
+    borderRadius: 10,
+    backgroundColor: '#fff',
+    paddingHorizontal: 14,
     marginBottom: 16,
-    paddingHorizontal: 12,
-    borderRadius: 8,
+    fontSize: 16,
   },
   passwordContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    borderColor: '#ccc',
+    borderColor: '#E2C1E5',
     borderWidth: 1,
-    borderRadius: 8,
-    marginBottom: 16,
-    paddingHorizontal: 12,
+    borderRadius: 10,
+    backgroundColor: '#fff',
+    paddingHorizontal: 14,
+    marginBottom: 24,
   },
   passwordInput: {
     flex: 1,
-    height: 48,
+    height: 50,
+    fontSize: 16,
   },
   eyeIcon: {
     paddingHorizontal: 8,
   },
   button: {
-    backgroundColor: '#F18F01',
-    paddingVertical: 12,
-    borderRadius: 8,
-    marginBottom: 16,
+    backgroundColor: '#FFA07A',
+    paddingVertical: 16,
+    borderRadius: 12,
+    elevation: 4,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.15,
+    shadowRadius: 4,
+    marginBottom: 20,
   },
   buttonText: {
     color: '#fff',
     textAlign: 'center',
     fontWeight: 'bold',
+    fontSize: 18,
   },
   linkText: {
-    color: '#F18F01',
+    color: '#A67DB8',
     textAlign: 'center',
+    fontSize: 16,
   },
 });

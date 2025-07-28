@@ -30,7 +30,7 @@ export default function ProfileScreen() {
       const user = auth.currentUser;
       if (!user) return;
 
-      setEmail(user.email || ''); // Email'i kullanıcıdan al
+      setEmail(user.email || '');
 
       try {
         const docRef = doc(db, 'profiles', user.uid);
@@ -56,7 +56,7 @@ export default function ProfileScreen() {
   const handleResetPassword = async () => {
     try {
       await sendPasswordResetEmail(auth, email);
-      Alert.alert("E-posta gönderildi", "Şifre sıfırlama bağlantısı e-posta adresinize gönderildi.");
+      Alert.alert("E-posta gönderildi", "Şifre sıfırlama bağlantısı e-posta adresinize gönderildi 💌");
     } catch (error) {
       console.error("Şifre sıfırlama hatası:", error);
       Alert.alert("Hata", "Geçerli bir e-posta adresiniz olmayabilir.");
@@ -78,7 +78,7 @@ export default function ProfileScreen() {
         targetWeight,
       });
 
-      Alert.alert('Başarılı', 'Profil kaydedildi 🎉');
+      Alert.alert('🎉 Başarılı', 'Profil kaydedildi!');
       router.back();
     } catch (error) {
       console.error('Profil kaydetme hatası:', error);
@@ -89,7 +89,7 @@ export default function ProfileScreen() {
   if (loading) {
     return (
       <View style={styles.container}>
-        <Text style={{ textAlign: 'center' }}>Yükleniyor...</Text>
+        <Text style={{ textAlign: 'center', color: '#7A5184' }}>Yükleniyor...</Text>
       </View>
     );
   }
@@ -97,18 +97,12 @@ export default function ProfileScreen() {
   return (
     <SafeAreaView style={styles.container}>
       <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
-        <Ionicons name="arrow-back" size={28} color="#444" />
-      </TouchableOpacity>
-
-      <TouchableOpacity onPress={handleResetPassword}>
-        <Text style={{ color: 'blue', textAlign: 'center', marginTop: 10 }}>
-          Şifremi Unuttum?
-        </Text>
+        <Ionicons name="arrow-back" size={28} color="#5B4B8A" />
       </TouchableOpacity>
 
       <Text style={styles.title}>Profil Ayarları</Text>
 
-      <Text style={styles.label}>Profil Resmi Seç</Text>
+      <Text style={styles.label}>Profil Emoji</Text>
       <FlatList
         data={profileImages}
         horizontal
@@ -154,8 +148,12 @@ export default function ProfileScreen() {
         keyboardType="numeric"
       />
 
-      <TouchableOpacity style={styles.button} onPress={handleSave}>
-        <Text style={styles.buttonText}>Kaydet</Text>
+      <TouchableOpacity style={styles.resetButton} onPress={handleResetPassword}>
+        <Text style={styles.resetText}>🔒 Şifremi Unuttum?</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
+        <Text style={styles.saveButtonText}>Kaydet</Text>
       </TouchableOpacity>
     </SafeAreaView>
   );
@@ -165,59 +163,75 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 24,
-    backgroundColor: '#fff',
+    backgroundColor: '#FFF1F7',
   },
   backButton: {
     marginBottom: 16,
   },
   title: {
-    fontSize: 26,
+    fontSize: 28,
     fontWeight: 'bold',
-    marginBottom: 24,
+    color: '#5B4B8A',
     textAlign: 'center',
+    marginBottom: 24,
   },
   label: {
     fontSize: 16,
     fontWeight: 'bold',
+    color: '#7A5184',
     marginTop: 12,
-    marginBottom: 4,
+    marginBottom: 6,
   },
   input: {
     height: 48,
-    borderColor: '#ccc',
+    borderColor: '#E2C1E5',
     borderWidth: 1,
-    borderRadius: 8,
+    borderRadius: 10,
+    backgroundColor: '#fff',
     paddingHorizontal: 12,
-    marginBottom: 8,
+    marginBottom: 12,
   },
   emojiList: {
     marginVertical: 12,
-    justifyContent: 'center',
   },
   emojiBox: {
     padding: 12,
-    marginRight: 8,
+    marginRight: 10,
     borderWidth: 2,
     borderColor: 'transparent',
     borderRadius: 12,
-    backgroundColor: '#f2f2f2',
+    backgroundColor: '#fce4ec',
   },
   selectedEmoji: {
-    borderColor: '#5EBEC4',
-    backgroundColor: '#e0f7fa',
+    borderColor: '#B570C1',
+    backgroundColor: '#f8bbd0',
   },
   emoji: {
     fontSize: 32,
   },
-  button: {
-    backgroundColor: '#5EBEC4',
-    paddingVertical: 14,
-    borderRadius: 8,
-    marginTop: 20,
+  resetButton: {
+    alignSelf: 'center',
+    marginVertical: 12,
   },
-  buttonText: {
+  resetText: {
+    color: '#A67DB8',
+    fontSize: 16,
+  },
+  saveButton: {
+    backgroundColor: '#A0D8EF',
+    paddingVertical: 16,
+    borderRadius: 12,
+    marginTop: 20,
+    elevation: 5,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.15,
+    shadowRadius: 4,
+  },
+  saveButtonText: {
     color: '#fff',
     textAlign: 'center',
     fontWeight: 'bold',
+    fontSize: 18,
   },
 });

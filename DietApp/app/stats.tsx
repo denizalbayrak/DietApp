@@ -1,16 +1,11 @@
-import { View, Text, StyleSheet, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { auth, db } from '../firebase';
 import { doc, getDoc } from 'firebase/firestore';
-import { TouchableOpacity } from 'react-native';
 import { router } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useFocusEffect } from '@react-navigation/native';
-import { useCallback } from 'react';
-export const options = {
-  headerShown: false,
-};
 
 const weekDays = ['Pzt', 'Sal', 'Çar', 'Per', 'Cum', 'Cmt', 'Paz'];
 
@@ -25,14 +20,10 @@ export default function StatsScreen() {
   const [average, setAverage] = useState<number>(0);
   const [overGoalDays, setOverGoalDays] = useState<number>(0);
 
-  const fetchStats = async (
-    setWeeklyData: React.Dispatch<React.SetStateAction<WeeklyEntry[]>>,
-    setAverage: React.Dispatch<React.SetStateAction<number>>,
-    setOverGoalDays: React.Dispatch<React.SetStateAction<number>>
-  ) => {
+  const fetchStats = async () => {
     const user = auth.currentUser;
     if (!user) return;
-  
+
     try {
       const profileRef = doc(db, 'profiles', user.uid);
       const entriesRef = doc(db, 'entries', user.uid);
@@ -40,17 +31,17 @@ export default function StatsScreen() {
         getDoc(profileRef),
         getDoc(entriesRef),
       ]);
-  
+
       const calorieGoal = profileSnap.exists()
         ? Number(profileSnap.data().calorieGoal) || 2000
         : 2000;
-  
+
       const entries = entriesSnap.exists() ? entriesSnap.data() : {};
       const today = new Date();
       const data: WeeklyEntry[] = [];
       let total = 0;
       let exceed = 0;
-  
+
       for (let i = 6; i >= 0; i--) {
         const date = new Date(today);
         date.setDate(date.getDate() - i);
@@ -58,13 +49,13 @@ export default function StatsScreen() {
         const label = weekDays[date.getDay() === 0 ? 6 : date.getDay() - 1];
         const dayEntries = entries[dateStr] || [];
         const dayTotal = dayEntries.reduce((sum: number, e: any) => sum + e.calories, 0);
-  
+
         if (dayTotal > calorieGoal) exceed++;
         total += dayTotal;
-  
+
         data.push({ label, date: dateStr, calories: dayTotal });
       }
-  
+
       setWeeklyData(data);
       setAverage(Math.round(total / 7));
       setOverGoalDays(exceed);
@@ -72,21 +63,24 @@ export default function StatsScreen() {
       console.error('İstatistik verisi alınamadı:', error);
     }
   };
+
   useEffect(() => {
-    fetchStats(setWeeklyData, setAverage, setOverGoalDays);
+    fetchStats();
   }, []);
-  
+
   useFocusEffect(
     useCallback(() => {
-      fetchStats(setWeeklyData, setAverage, setOverGoalDays);
+      fetchStats();
     }, [])
   );
+
   return (
     <SafeAreaView style={styles.container}>
-       <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
+      <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
         <Ionicons name="arrow-back" size={28} color="#444" />
       </TouchableOpacity>
-      <Text style={styles.title}>Haftalık İstatistikler</Text>
+
+      <Text style={styles.title}>📊 Haftalık İstatistikler</Text>
 
       <ScrollView style={{ flex: 1 }}>
         {weeklyData.map((day, index) => (
@@ -98,8 +92,8 @@ export default function StatsScreen() {
       </ScrollView>
 
       <View style={styles.summaryBox}>
-        <Text style={styles.summaryText}>Haftalık Ortalama: {average} kcal</Text>
-        <Text style={styles.summaryText}>Hedef Aşılan Gün: {overGoalDays} / 7</Text>
+        <Text style={styles.summaryText}>Haftalık Ortalama: <Text style={styles.bold}>{average} kcal</Text></Text>
+        <Text style={styles.summaryText}>Hedef Aşılan Gün: <Text style={styles.bold}>{overGoalDays} / 7</Text></Text>
         <Text style={styles.emoji}>
           {overGoalDays === 0 ? '🌟' : overGoalDays <= 3 ? '😊' : '🥲'}
         </Text>
@@ -112,45 +106,65 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 24,
-    backgroundColor: '#fff',
+    backgroundColor: '#E3FDFD',
   },
   backButton: {
     marginBottom: 16,
   },
   title: {
-    fontSize: 22,
+    fontSize: 24,
     fontWeight: 'bold',
-    marginBottom: 20,
+    marginBottom: 16,
     textAlign: 'center',
+    color: '#379683',
   },
   dayRow: {
+    backgroundColor: '#fff',
+    borderRadius: 12,
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    marginBottom: 10,
     flexDirection: 'row',
     justifyContent: 'space-between',
-    paddingVertical: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: '#eee',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
   dayLabel: {
-    fontWeight: 'bold',
     fontSize: 16,
+    fontWeight: 'bold',
+    color: '#555',
   },
   dayValue: {
     fontSize: 16,
-    color: '#555',
+    color: '#333',
   },
   summaryBox: {
     marginTop: 24,
-    paddingVertical: 16,
-    borderTopWidth: 1,
-    borderTopColor: '#ddd',
+    backgroundColor: '#fff',
+    paddingVertical: 20,
+    paddingHorizontal: 16,
+    borderRadius: 16,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.15,
+    shadowRadius: 4,
+    elevation: 4,
     alignItems: 'center',
   },
   summaryText: {
     fontSize: 16,
-    marginBottom: 4,
+    marginBottom: 6,
+    color: '#444',
+  },
+  bold: {
+    fontWeight: 'bold',
+    color: '#379683',
   },
   emoji: {
-    fontSize: 24,
+    fontSize: 30,
     marginTop: 8,
   },
 });
