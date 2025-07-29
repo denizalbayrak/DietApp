@@ -1,6 +1,8 @@
-import { initializeApp } from 'firebase/app';
-import { getAuth } from 'firebase/auth'; // Kullanıcı doğrulama için
 import { getFirestore } from 'firebase/firestore'; // Firestore kullanımı için (veri saklama)
+import { initializeApp } from 'firebase/app';
+import { initializeAuth, getReactNativePersistence } from 'firebase/auth';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 
 // Firebase yapılandırması
 const firebaseConfig = {
@@ -17,7 +19,9 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 
 // Firebase servislerine erişim
-const auth = getAuth(app); // Authentication servisi
+const auth = initializeAuth(app, {
+  persistence: getReactNativePersistence(AsyncStorage),
+});
 const db = getFirestore(app); // Firestore servisi
 
 export { auth, db };
