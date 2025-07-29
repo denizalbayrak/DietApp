@@ -107,7 +107,7 @@ export default function HomeScreen() {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={[styles.container, { paddingHorizontal: 16 }]}>
       {/* Header */}
       <View style={styles.header}>
         <View>
@@ -197,6 +197,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
+    paddingRight: 8, // ← Yeni
+    paddingLeft: 8,  // ← Yeni
   },
   greeting: {
     fontSize: 24,
@@ -214,19 +216,20 @@ const styles = StyleSheet.create({
     color: '#A67DB8',
   },
   profileCircle: {
-    width: 60,
-    height: 60,
-    borderRadius: 30,
+    width: 52,
+    height: 52,
+    borderRadius: 26,
     backgroundColor: '#fff',
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: 2,
     borderColor: '#eee',
-    elevation: 4, // Android shadow
-    shadowColor: '#000', // iOS shadow
+    elevation: 4,
+    shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.15,
     shadowRadius: 3,
+    marginLeft: 12, // ← Yeni
   },
   profileEmoji: {
     fontSize: 30,

@@ -9,6 +9,7 @@ import { useEffect, useState } from 'react';
 import { View, ActivityIndicator } from 'react-native';
 import { onAuthStateChanged } from 'firebase/auth';
 import { auth } from '../firebase';
+import * as SplashScreen from 'expo-splash-screen';
 
 export default function RootLayout() {
   const colorScheme = useColorScheme();
@@ -20,18 +21,22 @@ export default function RootLayout() {
   const [checkingAuth, setCheckingAuth] = useState(true);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      setCheckingAuth(false); 
-  
+    SplashScreen.preventAutoHideAsync();
+
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (user) {
         router.replace('/home');
       } else {
         router.replace('/login');
       }
+
+      setCheckingAuth(false);
+      await SplashScreen.hideAsync();
     });
-  
+
     return () => unsubscribe();
   }, []);
+
   if (!loaded || checkingAuth) {
     return (
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
