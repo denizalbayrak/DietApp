@@ -9,7 +9,7 @@ import {
   FlatList,
 } from 'react-native';
 import { router } from 'expo-router';
-import { db, auth } from '../firebase';
+import { db, auth } from '../../firebase';
 import { doc, setDoc, getDoc } from 'firebase/firestore';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';

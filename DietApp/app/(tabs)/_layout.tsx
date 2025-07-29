@@ -4,24 +4,28 @@ import { onAuthStateChanged } from 'firebase/auth';
 import { auth } from '../../firebase';
 import { router } from 'expo-router';
 import { ActivityIndicator, View } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
 
+export default function TabsLayout() {
+  const [loading, setLoading] = useState(true);
 
-  export default function RootLayout() {
-    const [loading, setLoading] = useState(true);
-  
-    useEffect(() => {
-      const unsubscribe = onAuthStateChanged(auth, (user) => {
-        setLoading(false);
-        if (!user) {
-          router.replace('/login');
-        } else {
-          router.replace('/home');
-        }
-      });
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (!user) {
+        router.replace('/login');
+      }
+      setLoading(false);
+    });
+
     return unsubscribe;
   }, []);
 
-  if (loading) return null;
-  return <Stack />;
+  if (loading) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+       <ActivityIndicator size="large" color="#F49FB6" />
+      </View>
+    );
+  }
+
+  return <Stack screenOptions={{ headerShown: false }} />;
 }

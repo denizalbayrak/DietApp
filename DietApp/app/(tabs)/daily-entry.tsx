@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { AnimatedCircularProgress } from 'react-native-circular-progress';
-import { auth, db } from '../firebase';
+import { auth, db } from '../../firebase';
 import {
   doc,
   getDoc,

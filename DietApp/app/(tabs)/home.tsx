@@ -1,6 +1,6 @@
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { useEffect, useState, useCallback } from 'react';
-import { auth, db } from '../firebase';
+import { auth, db } from '../../firebase';
 import { doc, getDoc } from 'firebase/firestore';
 import { router } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -197,8 +197,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingRight: 8, // ← Yeni
-    paddingLeft: 8,  // ← Yeni
+    marginBottom: 12,
+    paddingRight: 18, // yeni eklendi: sağdan boşluk
   },
   greeting: {
     fontSize: 24,
@@ -216,20 +216,13 @@ const styles = StyleSheet.create({
     color: '#A67DB8',
   },
   profileCircle: {
-    width: 52,
-    height: 52,
-    borderRadius: 26,
-    backgroundColor: '#fff',
+    width: 48,
+    height: 48,
+    borderRadius: 22,
+    backgroundColor: '#ffc7ef',
     alignItems: 'center',
     justifyContent: 'center',
-    borderWidth: 2,
-    borderColor: '#eee',
-    elevation: 4,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.15,
-    shadowRadius: 3,
-    marginLeft: 12, // ← Yeni
+    marginRight: 4, // sağ kenardan biraz içeride tut
   },
   profileEmoji: {
     fontSize: 30,
