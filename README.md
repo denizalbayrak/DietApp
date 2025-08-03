@@ -40,10 +40,13 @@ Tracks number of over-goal days
 
 Clear and structured summary
 
-🛠️ Technologies Used
-Technology	Purpose
-React Native (Expo)	Cross-platform mobile development
-Firebase Authentication	User login and password reset
-Firebase Firestore	Cloud database for storing user data
-AsyncStorage	Persistent login sessions
-React Navigation	Routing and screen transitions
+## 🛠️ Technologies Used
+
+| Technology              | Purpose                                |
+|-------------------------|----------------------------------------|
+| React Native (Expo)     | Cross-platform mobile development      |
+| Firebase Authentication | User login and password reset          |
+| Firebase Firestore      | Cloud database for storing user data   |
+| AsyncStorage            | Persistent login sessions              |
+| React Navigation        | Routing and screen transitions         |
+
