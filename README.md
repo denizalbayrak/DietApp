@@ -2,8 +2,8 @@
 
 A mobile application built with React Native (Expo) and Firebase, designed to help users monitor their daily calorie intake, track weekly statistics, and achieve their target weight goals.
 
-<img width="436/2" height="931/2" alt="Screenshot 2025-08-03 221523" src="https://github.com/user-attachments/assets/b3634146-1e58-4149-b3d2-747f4ed3ffe3" />
-<img width="432/2" height="932/2" alt="Screenshot 2025-08-03 222026" src="https://github.com/user-attachments/assets/2ee90fc2-a669-4eb3-acd3-21241fed715a" />
+<img width="218" height="465.5" alt="Screenshot 2025-08-03 221523" src="https://github.com/user-attachments/assets/b3634146-1e58-4149-b3d2-747f4ed3ffe3" />
+<img width="218" height="465.5" alt="Screenshot 2025-08-03 222026" src="https://github.com/user-attachments/assets/2ee90fc2-a669-4eb3-acd3-21241fed715a" />
 
 🚀 Features
 User Authentication
