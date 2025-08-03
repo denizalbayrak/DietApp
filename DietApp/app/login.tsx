@@ -106,7 +106,7 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 24,
     justifyContent: 'center',
-    backgroundColor: '#FFF1F7', // pastel pembe arka plan
+    backgroundColor: '#FFF1F7', 
   },
   title: {
     fontSize: 32,
@@ -154,7 +154,7 @@ const styles = StyleSheet.create({
     paddingLeft: 8,
   },
   button: {
-    backgroundColor: '#F49FB6', // pastel pembe
+    backgroundColor: '#F49FB6', 
     paddingVertical: 16,
     borderRadius: 12,
     marginBottom: 16,

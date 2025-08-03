@@ -1,10 +1,8 @@
-import { getFirestore } from 'firebase/firestore'; // Firestore kullanımı için (veri saklama)
+import { getFirestore } from 'firebase/firestore'; // Firestore -data storage
 import { initializeApp } from 'firebase/app';
 import { initializeAuth, getReactNativePersistence } from 'firebase/auth';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-
-// Firebase yapılandırması
 const firebaseConfig = {
   apiKey: "AIzaSyB6i9fYoRwR4f9dPI86MJWgrRnQQ4FeT_I",
   authDomain: "dietapp-4fee6.firebaseapp.com",
@@ -15,10 +13,9 @@ const firebaseConfig = {
   measurementId: "G-PGFPJGKXSY"
 };
 
-// Firebase'i başlat
+// start Firebase
 const app = initializeApp(firebaseConfig);
 
-// Firebase servislerine erişim
 const auth = initializeAuth(app, {
   persistence: getReactNativePersistence(AsyncStorage),
 });

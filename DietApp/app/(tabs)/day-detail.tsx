@@ -6,6 +6,7 @@ import { doc, getDoc } from 'firebase/firestore';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { ScrollView } from 'react-native';
 export const options = {
   headerShown: false,
 };
@@ -47,6 +48,7 @@ export default function DayDetailScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
+        <ScrollView contentContainerStyle={styles.scrollContent} keyboardShouldPersistTaps="handled">
        <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
         <Ionicons name="arrow-back" size={28} color="#444" />
       </TouchableOpacity>
@@ -69,6 +71,7 @@ export default function DayDetailScreen() {
       )}
 
       <Text style={styles.back} onPress={() => router.back()}>◀ Geri Dön</Text>
+      </ScrollView>
     </SafeAreaView>
   );
 }
@@ -81,6 +84,9 @@ const styles = StyleSheet.create({
     paddingBottom: 24,
     backgroundColor: '#fff',
     paddingHorizontal: 24,
+  },
+  scrollContent: {
+    paddingBottom: 40,
   },
   backButton: {
     marginBottom: 16,

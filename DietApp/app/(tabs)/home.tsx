@@ -5,7 +5,7 @@ import { doc, getDoc } from 'firebase/firestore';
 import { router } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useFocusEffect } from '@react-navigation/native';
-
+import { ScrollView } from 'react-native';
 export const options = {
   headerShown: false,
 };
@@ -107,8 +107,9 @@ export default function HomeScreen() {
   };
 
   return (
-    <SafeAreaView style={[styles.container, { paddingHorizontal: 16 }]}>
+    <SafeAreaView style={[styles.container, { paddingHorizontal: 24 }]}>
       {/* Header */}
+      <ScrollView contentContainerStyle={styles.scrollContent} keyboardShouldPersistTaps="handled">
       <View style={styles.header}>
         <View>
           <Text style={styles.greeting}>Hoş geldin</Text>
@@ -183,6 +184,7 @@ export default function HomeScreen() {
 
       {/* Motivation Message */}
       <Text style={styles.footer}>🍓 Küçük adımlar büyük değişimlere yol açar!</Text>
+      </ScrollView>
     </SafeAreaView>
   );
 }
@@ -198,7 +200,9 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     marginBottom: 12,
-    paddingRight: 18, // yeni eklendi: sağdan boşluk
+  },
+  scrollContent: {
+    paddingBottom: 40,
   },
   greeting: {
     fontSize: 24,
@@ -216,13 +220,13 @@ const styles = StyleSheet.create({
     color: '#A67DB8',
   },
   profileCircle: {
-    width: 48,
-    height: 48,
+    width: 54,
+    height: 54,
     borderRadius: 22,
     backgroundColor: '#ffc7ef',
     alignItems: 'center',
     justifyContent: 'center',
-    marginRight: 4, // sağ kenardan biraz içeride tut
+    marginLeft: -60, // sağ kenardan biraz içeride tut
   },
   profileEmoji: {
     fontSize: 30,

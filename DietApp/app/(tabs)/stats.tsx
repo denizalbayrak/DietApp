@@ -6,7 +6,6 @@ import { doc, getDoc } from 'firebase/firestore';
 import { router } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useFocusEffect } from '@react-navigation/native';
-
 const weekDays = ['Pzt', 'Sal', 'Çar', 'Per', 'Cum', 'Cmt', 'Paz'];
 
 type WeeklyEntry = {
@@ -76,6 +75,7 @@ export default function StatsScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
+       <ScrollView contentContainerStyle={styles.scrollContent} keyboardShouldPersistTaps="handled">
       <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
         <Ionicons name="arrow-back" size={28} color="#444" />
       </TouchableOpacity>
@@ -98,6 +98,7 @@ export default function StatsScreen() {
           {overGoalDays === 0 ? '🌟' : overGoalDays <= 3 ? '😊' : '🥲'}
         </Text>
       </View>
+      </ScrollView>
     </SafeAreaView>
   );
 }
@@ -140,6 +141,9 @@ const styles = StyleSheet.create({
   dayValue: {
     fontSize: 16,
     color: '#333',
+  },
+  scrollContent: {
+    paddingBottom: 40,
   },
   summaryBox: {
     marginTop: 24,

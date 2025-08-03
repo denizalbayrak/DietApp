@@ -19,7 +19,7 @@ import {
 } from 'firebase/firestore';
 import { router } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
-
+import { ScrollView } from 'react-native';
 export const options = {
   headerShown: false,
 };
@@ -103,6 +103,7 @@ export default function DailyEntryScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
+      <ScrollView contentContainerStyle={styles.scrollContent} keyboardShouldPersistTaps="handled">
       <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
         <Ionicons name="arrow-back" size={28} color="#444" />
       </TouchableOpacity>
@@ -163,6 +164,7 @@ export default function DailyEntryScreen() {
         )}
         ListHeaderComponent={<Text style={styles.listTitle}>Bugünkü Girdiler</Text>}
       />
+      </ScrollView>
     </SafeAreaView>
   );
 }
@@ -171,6 +173,9 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 24,
     backgroundColor: '#FFF2F7',
+  },
+  scrollContent: {
+    paddingBottom: 40,
   },
   backButton: {
     marginBottom: 16,

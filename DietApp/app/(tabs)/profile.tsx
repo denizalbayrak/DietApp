@@ -14,7 +14,7 @@ import { doc, setDoc, getDoc } from 'firebase/firestore';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { sendPasswordResetEmail } from 'firebase/auth';
-
+import { ScrollView } from 'react-native';
 const profileImages = ['🐵', '🐱', '🐶', '🐼', '🦊'];
 
 export default function ProfileScreen() {
@@ -96,65 +96,68 @@ export default function ProfileScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
-        <Ionicons name="arrow-back" size={28} color="#5B4B8A" />
-      </TouchableOpacity>
+      <ScrollView contentContainerStyle={styles.scrollContent} keyboardShouldPersistTaps="handled">
+        <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
+          <Ionicons name="arrow-back" size={28} color="#5B4B8A" />
+        </TouchableOpacity>
 
-      <Text style={styles.title}>Profil Ayarları</Text>
+        <Text style={styles.title} allowFontScaling={false}>Profil Ayarları</Text>
 
-      <Text style={styles.label}>Profil Emoji</Text>
-      <FlatList
-        data={profileImages}
-        horizontal
-        keyExtractor={(item) => item}
-        renderItem={({ item }) => (
-          <TouchableOpacity
-            style={[
-              styles.emojiBox,
-              item === selectedImage && styles.selectedEmoji,
-            ]}
-            onPress={() => setSelectedImage(item)}
-          >
-            <Text style={styles.emoji}>{item}</Text>
-          </TouchableOpacity>
-        )}
-        contentContainerStyle={styles.emojiList}
-        showsHorizontalScrollIndicator={false}
-      />
+        <Text style={styles.label} allowFontScaling={false}>Profil Emoji</Text>
+        <FlatList
+          data={profileImages}
+          horizontal={false}
+          numColumns={5}
+          keyExtractor={(item) => item}
+          renderItem={({ item }) => (
+            <TouchableOpacity
+              style={[
+                styles.emojiBox,
+                item === selectedImage && styles.selectedEmoji,
+              ]}
+              onPress={() => setSelectedImage(item)}
+            >
+              <Text style={styles.emoji} allowFontScaling={false}>{item}</Text>
+            </TouchableOpacity>
+          )}
+          contentContainerStyle={styles.emojiList}
+          scrollEnabled={false}
+        />
 
-      <Text style={styles.label}>Ad</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Adınızı girin"
-        value={name}
-        onChangeText={setName}
-      />
+        <Text style={styles.label} allowFontScaling={false}>Ad</Text>
+        <TextInput
+          style={styles.input}
+          placeholder="Adınızı girin"
+          value={name}
+          onChangeText={setName}
+        />
 
-      <Text style={styles.label}>Günlük Kalori Hedefi</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="örnek: 1800"
-        value={calorieGoal}
-        onChangeText={setCalorieGoal}
-        keyboardType="numeric"
-      />
+        <Text style={styles.label} allowFontScaling={false}>Günlük Kalori Hedefi</Text>
+        <TextInput
+          style={styles.input}
+          placeholder="örnek: 1800"
+          value={calorieGoal}
+          onChangeText={setCalorieGoal}
+          keyboardType="numeric"
+        />
 
-      <Text style={styles.label}>Hedef Kilo (kg)</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="örnek: 58"
-        value={targetWeight}
-        onChangeText={setTargetWeight}
-        keyboardType="numeric"
-      />
+        <Text style={styles.label} allowFontScaling={false}>Hedef Kilo (kg)</Text>
+        <TextInput
+          style={styles.input}
+          placeholder="örnek: 58"
+          value={targetWeight}
+          onChangeText={setTargetWeight}
+          keyboardType="numeric"
+        />
 
-      <TouchableOpacity style={styles.resetButton} onPress={handleResetPassword}>
-        <Text style={styles.resetText}>🔒 Şifremi Unuttum?</Text>
-      </TouchableOpacity>
+        <TouchableOpacity style={styles.resetButton} onPress={handleResetPassword}>
+          <Text style={styles.resetText} allowFontScaling={false}>🔒 Şifremi Unuttum?</Text>
+        </TouchableOpacity>
 
-      <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
-        <Text style={styles.saveButtonText}>Kaydet</Text>
-      </TouchableOpacity>
+        <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
+          <Text style={styles.saveButtonText} allowFontScaling={false}>Kaydet</Text>
+        </TouchableOpacity>
+      </ScrollView>
     </SafeAreaView>
   );
 }
@@ -164,6 +167,9 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 24,
     backgroundColor: '#FFF1F7',
+  },
+  scrollContent: {
+    paddingBottom: 40,
   },
   backButton: {
     marginBottom: 16,
@@ -192,18 +198,24 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   emojiList: {
-    marginVertical: 12,
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'center',
+    gap: 10,
+    marginBottom: 12,
   },
   emojiBox: {
-    padding: 12,
-    marginRight: 10,
-    borderWidth: 2,
-    borderColor: 'transparent',
+    width: 60,
+    height: 80,
     borderRadius: 12,
-    backgroundColor: '#fce4ec',
+    backgroundColor: '#FADAE0',
+    alignItems: 'center',
+    justifyContent: 'center',
+    margin: 4,
   },
   selectedEmoji: {
     borderColor: '#B570C1',
+    borderWidth: 2,
     backgroundColor: '#f8bbd0',
   },
   emoji: {
